@@ -1,8 +1,8 @@
 class UserService {
     constructor() {
-        this.users = [{ username: 'admin', password: 'admin123', role: 'admin' }];
-        this.currentUser = null;
-        this.isLoggedIn = false;
+        this.users = JSON.parse(localStorage.getItem('users')) || [{ username: 'admin', password: 'admin123', role: 'admin' }];
+        this.currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        this.isLoggedIn = !!this.currentUser;
     }
 
     login(username, password) {
@@ -10,6 +10,7 @@ class UserService {
         if (user) {
             this.isLoggedIn = true;
             this.currentUser = user;
+            localStorage.setItem('currentUser', JSON.stringify(user));
             return true;
         }
         return false;
@@ -20,23 +21,25 @@ class UserService {
             return false;
         }
         this.users.push({ username, password, role: 'user' });
+        localStorage.setItem('users', JSON.stringify(this.users));
         return true;
     }
 
     logout() {
         this.isLoggedIn = false;
         this.currentUser = null;
+        localStorage.removeItem('currentUser');
     }
 }
 
 class ProductService {
     constructor() {
-        this.products = [
+        this.products = JSON.parse(localStorage.getItem('products')) || [
             { id: 1, name: 'Rolex Submariner', description: 'Классические часы с автоматическим подзаводом', image: 'https://via.placeholder.com/150', price: 600000, currency: '₽', category: 'Классические' },
             { id: 2, name: 'Omega Seamaster', description: 'Спортивные часы с хронографом', image: 'https://via.placeholder.com/150', price: 450000, currency: '₽', category: 'Спортивные' },
             { id: 3, name: 'Tag Heuer Carrera', description: 'Роскошные часы для особых случаев', image: 'https://via.placeholder.com/150', price: 300000, currency: '₽', category: 'Роскошные' }
         ];
-        this.cart = [];
+        this.cart = JSON.parse(localStorage.getItem('cart')) || [];
     }
 
     addProduct(name, description, image, price, category) {
@@ -50,6 +53,7 @@ class ProductService {
             category
         };
         this.products.push(newProduct);
+        localStorage.setItem('products', JSON.stringify(this.products));
     }
 
     updateProduct(id, name, description, image, price, category) {
@@ -60,11 +64,13 @@ class ProductService {
             product.image = image;
             product.price = price;
             product.category = category;
+            localStorage.setItem('products', JSON.stringify(this.products));
         }
     }
 
     deleteProduct(id) {
         this.products = this.products.filter(product => product.id !== id);
+        localStorage.setItem('products', JSON.stringify(this.products));
     }
 
     getProducts() {
@@ -86,10 +92,12 @@ class ProductService {
 
     addToCart(product) {
         this.cart.push(product);
+        localStorage.setItem('cart', JSON.stringify(this.cart));
     }
 
     removeFromCart(productId) {
         this.cart = this.cart.filter(product => product.id !== productId);
+        localStorage.setItem('cart', JSON.stringify(this.cart));
     }
 
     getCart() {
@@ -123,8 +131,10 @@ function loadPage(page) {
     switch (page) {
         case 'home':
             mainContent.innerHTML = `
-                <h2>Добро пожаловать в WatchApp!</h2>
-                <p>На нашем приложении вы найдете самые стильные и функциональные часы.</p>
+                <div class="welcome-block">
+                    <h2>Добро пожаловать в WatchApp!</h2>
+                    <p>На нашем приложении вы найдете самые стильные и функциональные часы.</p>
+                </div>
                 <section class="news-section">
                     <h3>Новости</h3>
                     <article>
@@ -163,7 +173,9 @@ function loadPage(page) {
         case 'about':
             mainContent.innerHTML = `
                 <h1>О компании</h1>
-                <p>Мы создаем уникальные часы с любовью и вниманием к деталям.</p>`;
+                <p>Мы создаем уникальные часы с любовью и вниманием к деталям. Наша компания была основана в 2000 году и с тех пор мы стремимся предоставлять нашим клиентам только лучшие часы. Мы используем высококачественные материалы и современные технологии, чтобы создать часы, которые будут служить вам долгие годы.</p>
+                <p>Наша миссия - сделать так, чтобы каждый человек мог найти часы, которые идеально подходят его стилю и потребностям. Мы гордимся тем, что наши часы носят люди по всему миру, и мы продолжаем работать над тем, чтобы улучшать наши продукты и услуги.</p>
+                <p>Спасибо, что выбрали нас!</p>`;
             break;
         case 'login':
             mainContent.innerHTML = `
@@ -219,7 +231,7 @@ function loadPage(page) {
                 <h2>Профиль пользователя</h2>
                 <div id="profileInfo"></div>
                 <form id="profileForm">
-                    <input type="url" placeholder="Ссылка на ваше новое фото" required>
+                    <input type="file" id="profileImageInput" accept="image/*">
                     <button type="submit">Сохранить</button>
                 </form>
                 <div id="profileImage"></div>`;
@@ -365,12 +377,22 @@ function viewProduct(productId) {
 
 function updateProfile(event) {
     event.preventDefault();
-    const newProfileImage = event.target[0].value;
-    if (userService.currentUser) {
-        userService.currentUser.profileImage = newProfileImage;
-        updateProfileInfo();
+    const profileImageInput = document.getElementById('profileImageInput').files[0];
+    if (profileImageInput) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const newProfileImage = e.target.result;
+            if (userService.currentUser) {
+                userService.currentUser.profileImage = newProfileImage;
+                localStorage.setItem('currentUser', JSON.stringify(userService.currentUser));
+                updateProfileInfo();
+            }
+            alert('Профиль обновлен!');
+        };
+        reader.readAsDataURL(profileImageInput);
+    } else {
+        alert('Пожалуйста, выберите изображение.');
     }
-    alert('Профиль обновлен!');
 }
 
 function updateProfileInfo() {
