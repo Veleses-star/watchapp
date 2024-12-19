@@ -162,7 +162,7 @@ main {
     border-radius: 8px;
     padding: 2rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: 90%;
     max-width: 400px;
     margin: 2rem auto;
 }
@@ -174,7 +174,7 @@ main {
 
 .auth-form input,
 .auth-form button {
-    width: 100%;
+    width: 80%;
     padding: 0.5rem;
     margin: 0.5rem 0;
     border: 1px solid #ddd;
