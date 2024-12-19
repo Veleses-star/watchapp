@@ -35,9 +35,9 @@ class UserService {
 class ProductService {
     constructor() {
         this.products = JSON.parse(localStorage.getItem('products')) || [
-            { id: 1, name: 'Rolex Submariner', description: 'Классические часы с автоматическим подзаводом', image: 'https://via.placeholder.com/150', price: 600000, currency: '₽', category: 'Классические' },
-            { id: 2, name: 'Omega Seamaster', description: 'Спортивные часы с хронографом', image: 'https://via.placeholder.com/150', price: 450000, currency: '₽', category: 'Спортивные' },
-            { id: 3, name: 'Tag Heuer Carrera', description: 'Роскошные часы для особых случаев', image: 'https://via.placeholder.com/150', price: 300000, currency: '₽', category: 'Роскошные' }
+            { id: 1, name: 'Rolex Submariner', description: 'Классические часы с автоматическим подзаводом', image: '1.jpg', price: 600000, currency: '₽', category: 'Классические' },
+            { id: 2, name: 'Omega Seamaster', description: 'Спортивные часы с хронографом', image: '2.jpg', price: 450000, currency: '₽', category: 'Спортивные' },
+            { id: 3, name: 'Tag Heuer Carrera', description: 'Роскошные часы для особых случаев', image: '3.jpg', price: 300000, currency: '₽', category: 'Роскошные' }
         ];
         this.cart = JSON.parse(localStorage.getItem('cart')) || [];
     }
@@ -173,7 +173,7 @@ function loadPage(page) {
         case 'about':
             mainContent.innerHTML = `
                 <h1>О компании</h1>
-                <p>Мы создаем уникальные часы с любовью и вниманием к деталям. Наша компания была основана в 2000 году и с тех пор мы стремимся предоставлять нашим клиентам только лучшие часы. Мы используем высококачественные материалы и современные технологии, чтобы создать часы, которые будут служить вам долгие годы.</p>
+                <p>Мы создаем уникальные часы с любовью и вниманием к деталям. Мы стремимся предоставлять нашим клиентам только лучшие часы. Мы используем высококачественные материалы и современные технологии, чтобы создать часы, которые будут служить вам долгие годы.</p>
                 <p>Наша миссия - сделать так, чтобы каждый человек мог найти часы, которые идеально подходят его стилю и потребностям. Мы гордимся тем, что наши часы носят люди по всему миру, и мы продолжаем работать над тем, чтобы улучшать наши продукты и услуги.</p>
                 <p>Спасибо, что выбрали нас!</p>`;
             break;
