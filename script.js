@@ -39,17 +39,32 @@ class ProductService {
         this.cart = [];
     }
 
-    addProduct(name, description, image, price, currency, category) {
+    addProduct(name, description, image, price, category) {
         const newProduct = {
             id: this.products.length + 1,
             name,
             description,
             image,
             price,
-            currency,
+            currency: '₽', // Устанавливаем валюту по умолчанию на рубли
             category
         };
         this.products.push(newProduct);
+    }
+
+    updateProduct(id, name, description, image, price, category) {
+        const product = this.getProductById(id);
+        if (product) {
+            product.name = name;
+            product.description = description;
+            product.image = image;
+            product.price = price;
+            product.category = category;
+        }
+    }
+
+    deleteProduct(id) {
+        this.products = this.products.filter(product => product.id !== id);
     }
 
     getProducts() {
@@ -110,7 +125,7 @@ function loadPage(page) {
             mainContent.innerHTML = `
                 <h2>Добро пожаловать в WatchApp!</h2>
                 <p>На нашем приложении вы найдете самые стильные и функциональные часы.</p>
-                <section class="news">
+                <section class="news-section">
                     <h3>Новости</h3>
                     <article>
                         <h4>Новая коллекция часов!</h4>
@@ -118,7 +133,7 @@ function loadPage(page) {
                     </article>
                     <article>
                         <h4>Скидки на прошлые коллекции</h4>
-                        <p>Предложение ограничено! Успейте купить часы из прошлой коллекции по сниженным ценам!</p>
+                        <p>Предложение ограничено! Успейте купить часы из прошлых коллекций по сниженным ценам!</p>
                     </article>
                     <article>
                         <h4>Специальные предложения для подписчиков</h4>
@@ -130,22 +145,20 @@ function loadPage(page) {
             const addProductButton = userService.currentUser && userService.currentUser.role === 'admin'
                 ? `<button onclick="loadPage('addProduct')">Добавить товар</button>`
                 : '';
-            mainContent.innerHTML = `${addProductButton}<h2>Наши товары</h2><div id="productList" class="product-grid"></div>`;
+            mainContent.innerHTML = `${addProductButton}
+                <h2>Наши товары</h2>
+                <div class="filter-section">
+                    <input type="text" id="searchInput" placeholder="Поиск по названию" onkeyup="filterProducts()">
+                    <select id="categoryFilter" onchange="filterProducts()">
+                        <option value="">Все категории</option>
+                        ${productService.getAllCategories().map(category => `<option value="${category}">${category}</option>`).join('')}
+                    </select>
+                    <input type="number" id="minPrice" placeholder="Мин. цена" onkeyup="filterProducts()">
+                    <input type="number" id="maxPrice" placeholder="Макс. цена" onkeyup="filterProducts()">
+                </div>
+                <div id="productList" class="product-grid"></div>`;
 
-            const productListEl = document.getElementById('productList');
-            const categories = productService.getAllCategories();
-            categories.forEach(category => {
-                productListEl.innerHTML += `<h3>${category}</h3>`;
-                productService.getProductsByCategory(category).forEach(product => {
-                    productListEl.innerHTML += `
-                        <div class="product-card" onclick="viewProduct(${product.id})">
-                            <img src="${product.image}" alt="${product.name}">
-                            <h3>${product.name}</h3>
-                            <p>${product.price} ${product.currency}</p>
-                            <button class="add-to-cart" onclick="addToCart(${product.id}, event)">Добавить в корзину</button>
-                        </div>`;
-                });
-            });
+            filterProducts();
             break;
         case 'about':
             mainContent.innerHTML = `
@@ -154,14 +167,16 @@ function loadPage(page) {
             break;
         case 'login':
             mainContent.innerHTML = `
-                <h2>Авторизация</h2>
-                <form id="loginForm">
-                    <input type="text" id="username" placeholder="Логин" required>
-                    <input type="password" id="password" placeholder="Пароль" required>
-                    <button type="submit">Войти</button>
-                </form>
-                <div id="message" style="display: none; color: red;">Неверный логин или пароль!</div>
-                <p>Нет аккаунта? <a href="javascript:void(0);" onclick="loadPage('register')">Зарегистрироваться</a></p>`;
+                <div class="auth-form">
+                    <h2>Авторизация</h2>
+                    <form id="loginForm">
+                        <input type="text" id="username" placeholder="Логин" required>
+                        <input type="password" id="password" placeholder="Пароль" required>
+                        <button type="submit">Войти</button>
+                    </form>
+                    <div id="message" style="display: none; color: red;">Неверный логин или пароль!</div>
+                    <p>Нет аккаунта? <a href="javascript:void(0);" onclick="loadPage('register')">Зарегистрироваться</a></p>
+                </div>`;
             document.getElementById('loginForm').addEventListener('submit', (event) => {
                 event.preventDefault();
                 const username = document.getElementById('username').value;
@@ -176,14 +191,16 @@ function loadPage(page) {
             break;
         case 'register':
             mainContent.innerHTML = `
-                <h2>Регистрация</h2>
-                <form id="registerForm">
-                    <input type="text" id="newUsername" placeholder="Логин" required>
-                    <input type="password" id="newPassword" placeholder="Пароль" required>
-                    <button type="submit">Зарегистрироваться</button>
-                </form>
-                <div id="registerMessage" style="display: none; color: green;">Вы успешно зарегистрированы!</div>
-                <p>Уже есть аккаунт? <a href="javascript:void(0);" onclick="loadPage('login')">Войти</a></p>`;
+                <div class="auth-form">
+                    <h2>Регистрация</h2>
+                    <form id="registerForm">
+                        <input type="text" id="newUsername" placeholder="Логин" required>
+                        <input type="password" id="newPassword" placeholder="Пароль" required>
+                        <button type="submit">Зарегистрироваться</button>
+                    </form>
+                    <div id="registerMessage" style="display: none; color: green;">Вы успешно зарегистрированы!</div>
+                    <p>Уже есть аккаунт? <a href="javascript:void(0);" onclick="loadPage('login')">Войти</a></p>
+                </div>`;
             document.getElementById('registerForm').addEventListener('submit', (event) => {
                 event.preventDefault();
                 const username = document.getElementById('newUsername').value;
@@ -217,11 +234,6 @@ function loadPage(page) {
                     <textarea id="productDescription" placeholder="Описание товара" required></textarea>
                     <input type="url" id="productImage" placeholder="URL изображения товара" required>
                     <input type="number" id="productPrice" placeholder="Цена товара" required>
-                    <select id="productCurrency" required>
-                        <option value="$">$</option>
-                        <option value="₽">₽</option>
-                        <option value="€">€</option>
-                    </select>
                     <input type="text" id="productCategory" placeholder="Категория товара" required>
                     <button type="submit">Добавить товар</button>
                 </form>`;
@@ -231,12 +243,41 @@ function loadPage(page) {
                 const description = document.getElementById('productDescription').value;
                 const image = document.getElementById('productImage').value;
                 const price = document.getElementById('productPrice').value;
-                const currency = document.getElementById('productCurrency').value;
                 const category = document.getElementById('productCategory').value;
 
-                if (name && description && image && price && currency && category) {
-                    productService.addProduct(name, description, image, price, currency, category);
+                if (name && description && image && price && category) {
+                    productService.addProduct(name, description, image, price, category);
                     alert("Товар добавлен успешно!");
+                    loadPage('products');
+                } else {
+                    alert("Пожалуйста, заполните все поля.");
+                }
+            });
+            break;
+        case 'editProduct':
+            const productId = sessionStorage.getItem('editProductId');
+            const product = productService.getProductById(parseInt(productId));
+            mainContent.innerHTML = `
+                <h2>Редактировать товар</h2>
+                <form id="editProductForm" class="add-product-form">
+                    <input type="text" id="productName" placeholder="Название товара" value="${product.name}" required>
+                    <textarea id="productDescription" placeholder="Описание товара" required>${product.description}</textarea>
+                    <input type="url" id="productImage" placeholder="URL изображения товара" value="${product.image}" required>
+                    <input type="number" id="productPrice" placeholder="Цена товара" value="${product.price}" required>
+                    <input type="text" id="productCategory" placeholder="Категория товара" value="${product.category}" required>
+                    <button type="submit">Сохранить изменения</button>
+                </form>`;
+            document.getElementById('editProductForm').addEventListener('submit', (event) => {
+                event.preventDefault();
+                const name = document.getElementById('productName').value;
+                const description = document.getElementById('productDescription').value;
+                const image = document.getElementById('productImage').value;
+                const price = document.getElementById('productPrice').value;
+                const category = document.getElementById('productCategory').value;
+
+                if (name && description && image && price && category) {
+                    productService.updateProduct(parseInt(productId), name, description, image, price, category);
+                    alert("Товар обновлен успешно!");
                     loadPage('products');
                 } else {
                     alert("Пожалуйста, заполните все поля.");
@@ -339,12 +380,84 @@ function logout() {
     loadPage('home');
 }
 
+function filterProducts() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+    const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+    const productListEl = document.getElementById('productList');
+    const filteredProducts = productService.getProducts().filter(product =>
+        product.name.toLowerCase().includes(searchInput) &&
+        (categoryFilter === '' || product.category === categoryFilter) &&
+        product.price >= minPrice &&
+        product.price <= maxPrice
+    );
+
+    productListEl.innerHTML = '';
+    filteredProducts.forEach(product => {
+        const editButton = userService.currentUser && userService.currentUser.role === 'admin'
+            ? `<button class="edit-product" onclick="editProduct(${product.id}, event)">Редактировать</button>`
+            : '';
+        const deleteButton = userService.currentUser && userService.currentUser.role === 'admin'
+            ? `<button class="delete-product" onclick="deleteProduct(${product.id}, event)">Удалить</button>`
+            : '';
+        productListEl.innerHTML += `
+            <div class="product-card" onclick="viewProduct(${product.id})">
+                <img src="${product.image}" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p>${product.description}</p>
+                <p><strong>Цена:</strong> ${product.price} ${product.currency}</p>
+                <button class="add-to-cart" onclick="addToCart(${product.id}, event)">Добавить в корзину</button>
+                ${editButton}
+                ${deleteButton}
+            </div>`;
+    });
+}
+
+function editProduct(productId, event) {
+    event.stopPropagation();
+    sessionStorage.setItem('editProductId', productId);
+    loadPage('editProduct');
+}
+
+function deleteProduct(productId, event) {
+    event.stopPropagation();
+    if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+        productService.deleteProduct(productId);
+        alert('Товар удален успешно!');
+        loadPage('products');
+    }
+}
+
 document.getElementById('menuToggle').addEventListener('click', () => {
     menuService.openMenu();
 });
 
 document.getElementById('closeMenu').addEventListener('click', () => {
     menuService.closeMenu();
+});
+
+document.getElementById('profilePhoto').addEventListener('click', () => {
+    if (userService.isLoggedIn) {
+        loadPage('profile');
+    } else {
+        loadPage('login');
+    }
+});
+
+let startX;
+document.addEventListener('touchstart', (event) => {
+    startX = event.touches[0].clientX;
+});
+
+document.addEventListener('touchmove', (event) => {
+    const currentX = event.touches[0].clientX;
+    const deltaX = currentX - startX;
+    if (deltaX > 50 && !menuService.isMenuOpen) {
+        menuService.openMenu();
+    } else if (deltaX < -50 && menuService.isMenuOpen) {
+        menuService.closeMenu();
+    }
 });
 
 document.addEventListener('click', function(event) {
