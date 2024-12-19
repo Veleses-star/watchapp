@@ -1,0 +1,39 @@
+<!DOCTYPEhtml>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WatchApp</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="menu-icon" id="menuToggle">☰</div>
+        <div class="profile-info" id="profileInfo">
+            <img id="profilePhoto" src="default_avatar.png" alt="Профиль">
+            <span id="profileName">Гость</span>
+        </div>
+    </header>
+
+    <nav id="sidebar" class="sidebar">
+        <div class="close-btn" id="closeMenu">✕</div>
+        <div class="sidebar-content">
+            <a href="javascript:void(0);" onclick="loadPage('home')">Главная</a>
+            <a href="javascript:void(0);" onclick="loadPage('products')">Товары</a>
+            <a href="javascript:void(0);" onclick="loadPage('about')">О компании</a>
+            <a href="javascript:void(0);" onclick="loadPage('cart')">Корзина</a>
+            <div class="auth-buttons" id="authButtons">
+                <a href="javascript:void(0);" onclick="loadPage('login')">Авторизация</a>
+                <a href="javascript:void(0);" onclick="loadPage('register')">Регистрация</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="mainContent">
+        <!-- Контент будет загружаться здесь -->
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

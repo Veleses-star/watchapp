@@ -1,0 +1,249 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: rgba(51, 51, 51, 0.8);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-info img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.profile-info span {
+    font-weight: bold;
+}
+
+.sidebar {
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    background-color: rgba(51, 51, 51, 0.9);
+    color: white;
+    transition: left 0.3s;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar .close-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    text-align: right;
+    padding: 1rem;
+}
+
+.sidebar-content {
+    padding: 1rem;
+}
+
+.sidebar-content a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin: 1rem 0;
+    transition: color 0.3s;
+}
+
+.sidebar-content a:hover {
+    color: #ddd;
+}
+
+.auth-buttons {
+    margin-top: 2rem;
+}
+
+main {
+    padding: 2rem;
+    margin-left: 0; /* Adjust for sidebar */
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.product-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    width: calc(100% - 1rem); /* Adjust for mobile */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.product-card h3 {
+    margin: 0.5rem 0;
+    color: #333;
+}
+
+.product-card p {
+    margin: 0;
+    color: #666;
+}
+
+.product-card .add-to-cart {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.product-card .add-to-cart:hover {
+    background-color: #555;
+}
+
+.product-details {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.product-details h2 {
+    color: #333;
+}
+
+.product-details p {
+    color: #666;
+}
+
+.add-product-form {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.add-product-form input,
+.add-product-form textarea,
+.add-product-form button,
+.add-product-form select {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.add-product-form button {
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-product-form button:hover {
+    background-color: #555;
+}
+
+.cart {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+}
+
+.cart h2 {
+    color: #333;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cart-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    margin-right: 1rem;
+}
+
+.cart-item h3 {
+    margin: 0;
+    color: #333;
+}
+
+.cart-item p {
+    margin: 0;
+    color: #666;
+}
+
+.cart-item .remove-from-cart {
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: auto;
+}
+
+.cart-item .remove-from-cart:hover {
+    background-color: #555;
+}
+
+@media (min-width: 768px) {
+    .product-card {
+        width: calc(50% - 1rem); /* Adjust for tablets */
+    }
+}
+
+@media (min-width: 1024px) {
+    .product-card {
+        width: calc(33.333% - 1rem); /* Adjust for desktops */
+    }
+}
