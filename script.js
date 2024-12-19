@@ -232,7 +232,7 @@ function loadPage(page) {
                 <form id="addProductForm" class="add-product-form">
                     <input type="text" id="productName" placeholder="Название товара" required>
                     <textarea id="productDescription" placeholder="Описание товара" required></textarea>
-                    <input type="url" id="productImage" placeholder="URL изображения товара" required>
+                    <input type="file" id="productImage" accept="image/*" required>
                     <input type="number" id="productPrice" placeholder="Цена товара" required>
                     <input type="text" id="productCategory" placeholder="Категория товара" required>
                     <button type="submit">Добавить товар</button>
@@ -241,14 +241,19 @@ function loadPage(page) {
                 event.preventDefault();
                 const name = document.getElementById('productName').value;
                 const description = document.getElementById('productDescription').value;
-                const image = document.getElementById('productImage').value;
+                const imageFile = document.getElementById('productImage').files[0];
                 const price = document.getElementById('productPrice').value;
                 const category = document.getElementById('productCategory').value;
 
-                if (name && description && image && price && category) {
-                    productService.addProduct(name, description, image, price, category);
-                    alert("Товар добавлен успешно!");
-                    loadPage('products');
+                if (name && description && imageFile && price && category) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const image = e.target.result;
+                        productService.addProduct(name, description, image, price, category);
+                        alert("Товар добавлен успешно!");
+                        loadPage('products');
+                    };
+                    reader.readAsDataURL(imageFile);
                 } else {
                     alert("Пожалуйста, заполните все поля.");
                 }
@@ -262,7 +267,7 @@ function loadPage(page) {
                 <form id="editProductForm" class="add-product-form">
                     <input type="text" id="productName" placeholder="Название товара" value="${product.name}" required>
                     <textarea id="productDescription" placeholder="Описание товара" required>${product.description}</textarea>
-                    <input type="url" id="productImage" placeholder="URL изображения товара" value="${product.image}" required>
+                    <input type="file" id="productImage" accept="image/*">
                     <input type="number" id="productPrice" placeholder="Цена товара" value="${product.price}" required>
                     <input type="text" id="productCategory" placeholder="Категория товара" value="${product.category}" required>
                     <button type="submit">Сохранить изменения</button>
@@ -271,14 +276,26 @@ function loadPage(page) {
                 event.preventDefault();
                 const name = document.getElementById('productName').value;
                 const description = document.getElementById('productDescription').value;
-                const image = document.getElementById('productImage').value;
+                const imageFile = document.getElementById('productImage').files[0];
                 const price = document.getElementById('productPrice').value;
                 const category = document.getElementById('productCategory').value;
 
-                if (name && description && image && price && category) {
-                    productService.updateProduct(parseInt(productId), name, description, image, price, category);
-                    alert("Товар обновлен успешно!");
-                    loadPage('products');
+                if (name && description && price && category) {
+                    let image = product.image;
+                    if (imageFile) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            image = e.target.result;
+                            productService.updateProduct(parseInt(productId), name, description, image, price, category);
+                            alert("Товар обновлен успешно!");
+                            loadPage('products');
+                        };
+                        reader.readAsDataURL(imageFile);
+                    } else {
+                        productService.updateProduct(parseInt(productId), name, description, image, price, category);
+                        alert("Товар обновлен успешно!");
+                        loadPage('products');
+                    }
                 } else {
                     alert("Пожалуйста, заполните все поля.");
                 }
@@ -407,6 +424,7 @@ function filterProducts() {
                 <h3>${product.name}</h3>
                 <p>${product.description}</p>
                 <p><strong>Цена:</strong> ${product.price} ${product.currency}</p>
+                <div style="margin-bottom: 1rem;"></div>
                 <button class="add-to-cart" onclick="addToCart(${product.id}, event)">Добавить в корзину</button>
                 ${editButton}
                 ${deleteButton}

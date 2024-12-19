@@ -99,6 +99,7 @@ main {
     width: 100%;
     max-width: 800px;
     margin: 2rem auto;
+    position: relative;
 }
 
 .news-section h3 {
@@ -114,6 +115,8 @@ main {
     margin-bottom: 1rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
+    position: relative;
+    z-index: 1;
 }
 
 .news-section article:hover {
@@ -128,6 +131,19 @@ main {
 .news-section article p {
     margin: 0;
     color: #666;
+}
+
+.news-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 0;
+    border-radius: 8px;
+    margin: 1rem;
 }
 
 .auth-form {
@@ -182,6 +198,9 @@ main {
     transition: transform 0.3s;
     cursor: pointer;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .product-card:hover {
@@ -371,5 +390,27 @@ main {
 @media (min-width: 1024px) {
     .product-card {
         width: calc(33.333% - 1rem); /* Adjust for desktops */
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-form {
+        padding: 1rem;
+    }
+
+    .auth-form input,
+    .auth-form button {
+        padding: 1rem;
+    }
+
+    .product-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .product-card p {
+        margin-bottom: 1rem;
     }
 }
