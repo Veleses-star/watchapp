@@ -404,7 +404,7 @@ main {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 500px) {
     .auth-form {
         padding: 1rem;
     }
